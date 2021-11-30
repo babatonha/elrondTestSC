@@ -1,0 +1,5 @@
+{
+    "language": "rust",
+    "rust-client.channel": "stable",
+    "rust-client.rustupPath": "$HOME/.cargo/bin/rustup"
+}
