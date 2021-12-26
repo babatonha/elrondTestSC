@@ -9,6 +9,14 @@ mod nft_module;
 pub struct ExampleAttributes {
     pub creation_timestamp: u64,
 }
+//test struct
+pub struct TestStruct{
+    name: ManagedBuffer,
+    royalties: BigUint,
+    uri: ManagedBuffer,
+    selling_price: BigUint,
+    attributes: ManagedBuffer,
+}
 
 #[elrond_wasm::contract]
 pub trait NftMinter: nft_module::NftModule {
@@ -20,10 +28,10 @@ pub trait NftMinter: nft_module::NftModule {
     #[endpoint(createNft)]
     fn create_nft(
         &self,
-        name: ManagedBuffer,
-        royalties: BigUint,
-        uri: ManagedBuffer,
-        selling_price: BigUint,
+        //name: ManagedBuffer,
+       // royalties: BigUint,
+       // uri: ManagedBuffer,
+       // selling_price: BigUint,
         #[var_args] opt_token_used_as_payment: OptionalArg<TokenIdentifier>,
         #[var_args] opt_token_used_as_payment_nonce: OptionalArg<u64>,
     ) -> SCResult<u64> {
@@ -39,17 +47,39 @@ pub trait NftMinter: nft_module::NftModule {
                 .unwrap_or_default()
         };
 
+        //TODO: I want to pass attritubets for each item in the loop.
         let attributes = ExampleAttributes {
             creation_timestamp: self.blockchain().get_block_timestamp(),
         };
-        self.create_nft_with_attributes(
-            name,
-            royalties,
-            attributes,
-            uri,
-            selling_price,
-            token_used_as_payment,
-            token_used_as_payment_nonce,
-        )
+
+/////////////////////////////////////NEW CODE////////////////////////////////////////////////////////////////////////
+
+        //TODO: loop here to create more than bulk nfts.
+        let test_var = TestStruct::new();
+
+        let test_array = [TestStruct::new(); 4000];
+
+        for test_var in test_array.iter(){
+            self.create_nft_with_attributes(
+                test_var.name,
+                test_var.royalties,
+                test_var.attributes,
+                test_var.uri,
+                test_var.selling_price,
+                token_used_as_payment,
+                token_used_as_payment_nonce,
+            )
+        }
+/////////////////////////////////////NEW CODE/ END///////////////////////////////////////////////////////////////////////
+
+        // self.create_nft_with_attributes(
+        //     name,
+        //     royalties,
+        //     attributes,
+        //     uri,
+        //     selling_price,
+        //     token_used_as_payment,
+        //     token_used_as_payment_nonce,
+        // )
     }
 }
