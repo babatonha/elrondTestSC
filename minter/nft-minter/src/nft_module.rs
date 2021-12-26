@@ -13,6 +13,15 @@ pub struct PriceTag<M: ManagedTypeApi> {
     pub amount: BigUint<M>,
 }
 
+#[derive(NestedEncode, NestedDecode, TopEncode, TopDecode, TypeAbi)]
+pub struct TestStruct<M: ManagedTypeApi> {
+    pub name: ManagedBuffer<M>,
+    pub royalties: BigUint<M>,
+    pub uri: ManagedBuffer<M>,
+    pub selling_price:BigUint<M>,
+    pub attributes: ManagedBuffer<M>,
+}
+
 #[elrond_wasm::module]
 pub trait NftModule {
     // endpoints - owner-only
@@ -179,6 +188,9 @@ pub trait NftModule {
         let mut uris = ManagedVec::new();
         uris.push(uri);
 
+        //TODO: be ableto read the list of nfts 
+        //loop through each item in the list and create nfts.
+
         let nft_nonce = self.send().esdt_nft_create(
             &nft_token_id,
             &BigUint::from(NFT_AMOUNT),
@@ -222,4 +234,7 @@ pub trait NftModule {
 
     #[storage_mapper("priceTag")]
     fn price_tag(&self, nft_nonce: u64) -> SingleValueMapper<PriceTag<Self::Api>>;
+
+    #[storage_mapper("testStruct")]
+    fn test_struct(&self) -> SingleValueMapper<TestStruct<Self::Api>>;
 }
